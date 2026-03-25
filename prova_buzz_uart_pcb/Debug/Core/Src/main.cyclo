@@ -1,10 +1,6 @@
-../Core/Src/main.c:67:6:Buzzer_Beep	1
-../Core/Src/main.c:85:5:main	1
-../Core/Src/main.c:140:6:SystemClock_Config	3
-../Core/Src/main.c:182:13:MX_TIM1_Init	5
-../Core/Src/main.c:247:13:MX_TIM2_Init	4
-../Core/Src/main.c:296:13:MX_USART1_UART_Init	2
-../Core/Src/main.c:327:13:MX_DMA_Init	1
-../Core/Src/main.c:348:13:MX_GPIO_Init	1
-../Core/Src/main.c:366:6:Control_Peltier_Voltage	3
-../Core/Src/main.c:383:6:Error_Handler	1
+../Core/Src/main.c:62:6:Buzzer_Beep	1
+../Core/Src/main.c:80:5:main	1
+../Core/Src/main.c:125:13:MX_TIM2_Init	3
+../Core/Src/main.c:156:6:Control_Peltier_Voltage	3
+../Core/Src/main.c:169:6:Control_Fans	5
+../Core/Src/main.c:190:6:Error_Handler	1
