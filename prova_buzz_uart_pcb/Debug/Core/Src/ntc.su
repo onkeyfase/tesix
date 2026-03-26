@@ -1,0 +1,6 @@
+../Core/Src/ntc.c:13:6:NTC_Init	16	static
+../Core/Src/ntc.c:22:9:NTC_DataReady	4	static
+../Core/Src/ntc.c:27:6:NTC_ClearFlag	4	static
+../Core/Src/ntc.c:32:10:NTC_GetRaw	16	static
+../Core/Src/ntc.c:38:7:NTC_GetResistance	32	static
+../Core/Src/ntc.c:55:6:NTC_ConvCpltCallback	24	static
