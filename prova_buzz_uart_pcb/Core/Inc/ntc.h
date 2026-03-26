@@ -9,11 +9,6 @@
 #define NTC_R_FIXED     100000.0f   // R verso GND (100kΩ)
 #define NTC_VCC         3.3f        // tensione alimentazione
 
-// ─── Parametri NTC — da completare con datasheet ────────────────────────────
-// #define NTC_R_NOMINAL   100000.0f  // resistenza NTC a 25°C (ohm)
-// #define NTC_T_NOMINAL   25.0f      // temperatura nominale (°C)
-// #define NTC_B_COEFF     3950.0f    // coefficiente B
-
 // ─── API pubblica ────────────────────────────────────────────────────────────
 
 // Inizializza e avvia la prima conversione ADC con interrupt
