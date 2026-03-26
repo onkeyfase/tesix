@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000600c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000f4b8  00000000  00000000  0000603c  2**0
+ 12 .debug_info   0000f542  00000000  00000000  0000603c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 000022af  00000000  00000000  000154f4  2**0
+ 13 .debug_abbrev 000022d3  00000000  00000000  0001557e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000e28  00000000  00000000  000177a8  2**3
+ 14 .debug_aranges 00000e30  00000000  00000000  00017858  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000b19  00000000  00000000  000185d0  2**0
+ 15 .debug_rnglists 00000b20  00000000  00000000  00018688  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00017803  00000000  00000000  000190e9  2**0
+ 16 .debug_macro  00017803  00000000  00000000  000191a8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00010053  00000000  00000000  000308ec  2**0
+ 17 .debug_line   0001008d  00000000  00000000  000309ab  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00099509  00000000  00000000  0004093f  2**0
+ 18 .debug_str    00099534  00000000  00000000  00040a38  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000d9e48  2**0
+ 19 .comment      00000043  00000000  00000000  000d9f6c  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000038bc  00000000  00000000  000d9e8c  2**2
+ 20 .debug_frame  000038e0  00000000  00000000  000d9fb0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 000000a4  00000000  00000000  000dd748  2**0
+ 21 .debug_line_str 000000a4  00000000  00000000  000dd890  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1443,10 +1443,10 @@ __STATIC_FORCEINLINE void __disable_irq(void)
 	...
 
 08000ad8 <NTC_Init>:
-static volatile uint8_t   data_ready      = 0;
-
-// ─── Implementazione ─────────────────────────────────────────────────────────
-
+/*
+salva il puntatore all'ADC ed azzera lo stato, e avvia la prima conversione con interrupt
+HAL_ADC_Start_IT() fa partire una singola conversione e scatta il callback. ne fa uno alla volta (non 6 insieme)
+*/
 void NTC_Init(ADC_HandleTypeDef *hadc)
 {
  8000ad8:	b580      	push	{r7, lr}
@@ -1540,7 +1540,9 @@ uint32_t NTC_GetRaw(uint8_t channel)
  8000b64:	2000020c 	.word	0x2000020c
 
 08000b68 <NTC_GetResistance>:
+/*
 
+*/
 float NTC_GetResistance(uint8_t channel)
 {
  8000b68:	b480      	push	{r7}
@@ -1555,12 +1557,12 @@ float NTC_GetResistance(uint8_t channel)
  8000b78:	4b1c      	ldr	r3, [pc, #112]	@ (8000bec <NTC_GetResistance+0x84>)
  8000b7a:	e02d      	b.n	8000bd8 <NTC_GetResistance+0x70>
 
-    uint32_t raw   = adc_buffer[channel];
+    uint32_t raw   = adc_buffer[channel]; //valore grezzo digitale 0 - 4095
  8000b7c:	79fb      	ldrb	r3, [r7, #7]
  8000b7e:	4a1c      	ldr	r2, [pc, #112]	@ (8000bf0 <NTC_GetResistance+0x88>)
  8000b80:	f852 3023 	ldr.w	r3, [r2, r3, lsl #2]
  8000b84:	617b      	str	r3, [r7, #20]
-    float    v_adc = (raw / 4095.0f) * NTC_VCC;
+    float    v_adc = (raw / 4095.0f) * NTC_VCC; //converto il valore grezzo in tensione reale
  8000b86:	697b      	ldr	r3, [r7, #20]
  8000b88:	ee07 3a90 	vmov	s15, r3
  8000b8c:	eeb8 7a67 	vcvt.f32.u32	s14, s15
@@ -1581,7 +1583,7 @@ float NTC_GetResistance(uint8_t channel)
 
     // Partitore: NTC verso 3.3V, R_fixed (100kΩ) verso GND
     // R_NTC = R_fixed * (Vcc - V_adc) / V_adc
-    float r_ntc = NTC_R_FIXED * (NTC_VCC - v_adc) / v_adc;
+    float r_ntc = NTC_R_FIXED * (NTC_VCC - v_adc) / v_adc; //formula inversa per calcolare rNTC
  8000bb6:	ed9f 7a10 	vldr	s14, [pc, #64]	@ 8000bf8 <NTC_GetResistance+0x90>
  8000bba:	edd7 7a04 	vldr	s15, [r7, #16]
  8000bbe:	ee77 7a67 	vsub.f32	s15, s14, s15
@@ -1622,7 +1624,7 @@ void NTC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  8000c0e:	4293      	cmp	r3, r2
  8000c10:	d124      	bne.n	8000c5c <NTC_ConvCpltCallback+0x5c>
 
-    // Salva il valore convertito nel buffer
+    // leggi e salva il valore convertito nel buffer non appena l'adc finisce una conversione
     adc_buffer[current_channel] = HAL_ADC_GetValue(hadc);
  8000c12:	4b15      	ldr	r3, [pc, #84]	@ (8000c68 <NTC_ConvCpltCallback+0x68>)
  8000c14:	781b      	ldrb	r3, [r3, #0]
@@ -1633,7 +1635,7 @@ void NTC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  8000c20:	4603      	mov	r3, r0
  8000c22:	4a12      	ldr	r2, [pc, #72]	@ (8000c6c <NTC_ConvCpltCallback+0x6c>)
  8000c24:	f842 3024 	str.w	r3, [r2, r4, lsl #2]
-    current_channel++;
+    current_channel++; //incrementa
  8000c28:	4b0f      	ldr	r3, [pc, #60]	@ (8000c68 <NTC_ConvCpltCallback+0x68>)
  8000c2a:	781b      	ldrb	r3, [r3, #0]
  8000c2c:	b2db      	uxtb	r3, r3
@@ -1657,7 +1659,7 @@ void NTC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     }
     else
     {
-        // Tutti e 6 i canali letti
+        // appena tutti e 6 i canali letti
         current_channel = 0;
  8000c48:	4b07      	ldr	r3, [pc, #28]	@ (8000c68 <NTC_ConvCpltCallback+0x68>)
  8000c4a:	2200      	movs	r2, #0
@@ -1667,7 +1669,7 @@ void NTC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  8000c50:	2201      	movs	r2, #1
  8000c52:	701a      	strb	r2, [r3, #0]
 
-        // Ricomincia il ciclo immediatamente
+        // ricomincia il ciclo azzerando il contatore e mettendo data ready a 1
         HAL_ADC_Start_IT(hadc);
  8000c54:	6878      	ldr	r0, [r7, #4]
  8000c56:	f000 fb3d 	bl	80012d4 <HAL_ADC_Start_IT>

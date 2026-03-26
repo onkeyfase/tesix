@@ -82,3 +82,23 @@ void NTC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
         HAL_ADC_Start_IT(hadc);
     }
 }
+
+float NTC_GetTemperature(uint8_t channel)
+{
+    float r_ntc = NTC_GetResistance(channel);
+    if (r_ntc <= 0.0f) return -273.15f; // Valore di errore
+
+    // costanti tipiche (da verificare sul datasheet
+    const float BETA = 3950.0f;    // Beta
+    const float R0   = 10000.0f;   // resistenza a 25°C (10k), non ho capito se r0 è un valore fixed o se è r=100k
+    const float T0   = 298.15f;    // 25°C espressi in kelvin
+
+    float temperatura_k;
+    // Formula inversa: 1/T = 1/T0 + (1/Beta) * ln(R/R0)
+    temperatura_k = logf(r_ntc / R0);
+    temperatura_k /= BETA;
+    temperatura_k += (1.0f / T0);
+    temperatura_k = 1.0f / temperatura_k; //inverso e ottengo la temperatura effettiva
+
+    return temperatura_k - 273.15f; // Conversione da Kelvin a Celsius
+}

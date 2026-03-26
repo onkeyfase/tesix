@@ -174,9 +174,9 @@ int main(void)
 
 	        for (uint8_t i = 0; i < NTC_COUNT; i++)
 	        {
-	            uint32_t raw      = NTC_GetRaw(i);
-	            float    r_ntc    = NTC_GetResistance(i);
-	            // float temp     = NTC_GetTemperature(i); // da abilitare con datasheet
+	            uint32_t raw    = NTC_GetRaw(i);
+	            float r_ntc   	= NTC_GetResistance(i);
+	            float temp 		= NTC_GetTemperature(i); // da sistemare con i valori giusti del datasheet del sensore
 	        }
 	    }
   }

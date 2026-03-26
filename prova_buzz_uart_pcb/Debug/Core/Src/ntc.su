@@ -1,6 +1,7 @@
-../Core/Src/ntc.c:13:6:NTC_Init	16	static
-../Core/Src/ntc.c:22:9:NTC_DataReady	4	static
-../Core/Src/ntc.c:27:6:NTC_ClearFlag	4	static
-../Core/Src/ntc.c:32:10:NTC_GetRaw	16	static
-../Core/Src/ntc.c:38:7:NTC_GetResistance	32	static
-../Core/Src/ntc.c:55:6:NTC_ConvCpltCallback	24	static
+../Core/Src/ntc.c:18:6:NTC_Init	16	static
+../Core/Src/ntc.c:27:9:NTC_DataReady	4	static
+../Core/Src/ntc.c:32:6:NTC_ClearFlag	4	static
+../Core/Src/ntc.c:37:10:NTC_GetRaw	16	static
+../Core/Src/ntc.c:45:7:NTC_GetResistance	32	static
+../Core/Src/ntc.c:62:6:NTC_ConvCpltCallback	24	static
+../Core/Src/ntc.c:86:7:NTC_GetTemperature	40	static
